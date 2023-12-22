@@ -4,7 +4,7 @@ import digitalio
 import busio
 import board
 import time
-from adafruit_epd.ssd1675 import Adafruit_SSD1675
+from adafruit_epd.ssd1680 import Adafruit_SSD1680
 from dotenv import load_dotenv
 from display_metro_graphics import Metro_Graphics
 
@@ -25,7 +25,7 @@ DEBOUNCE_DELAY = 0.3
 
 ## Station code can be set to 'All' to get all the stations or 
 ## a specific station code such as B03
-station_code = ['B03', 'A08', 'A15']
+station_code = ['B35']
 station_code_index = 0
 
 api_key = os.getenv('METRO_API_KEY')
@@ -33,7 +33,7 @@ api_url = 'https://api.wmata.com/StationPrediction.svc/json/GetPrediction/{}'.fo
 
 request_headers = {'api_key': api_key}
 
-display = Adafruit_SSD1675(   # Older eInk Bonnet
+display = Adafruit_SSD1680(   # newer eInk bonnet
     122, 250, spi, cs_pin=ecs, dc_pin=dc, sramcs_pin=None, rst_pin=rst, busy_pin=busy,
 )
 
