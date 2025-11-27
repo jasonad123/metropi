@@ -45,7 +45,7 @@ The script will:
 * Create API access token on the [WMATA developer site](https://developer.wmata.com/)
 * Clone the repository: `git clone https://github.com/jasonad123/metropi.git`
 * Change into the directory: `cd metropi`
-* Install system dependencies: `sudo apt-get update && sudo apt-get install -y python3-dev swig`
+* Install system dependencies: `sudo apt-get update && sudo apt-get install -y python3-dev swig liblgpio-dev`
 * Create a virtual environment: `python3 -m venv venv`
 * Activate the virtual environment: `source venv/bin/activate`
 * Install dependencies: `pip install -r requirements.txt`
