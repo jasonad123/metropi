@@ -65,7 +65,7 @@ sudo journalctl -u metropi -f   # View logs
 
 ## Configuration
 
-* To change the station being displayed modify `line 33` in [main.py](main.py#L33) with the station code you want to use.
+* To change the station being displayed modify `line 53` in [main.py](main.py#L53) with the station code you want to use.
 * Station codes can be found in [the following JSON](https://developer.wmata.com/docs/services/5476364f031f590f38092507/operations/5476364f031f5909e4fe3311?) from the WMATA API.
 
 ## Testing
