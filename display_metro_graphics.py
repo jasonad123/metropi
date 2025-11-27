@@ -33,19 +33,16 @@ class Metro_Graphics:
         self._has_arrived = None
 
     def display_metro(self, metro_status):
-     
+
         if len(metro_status['Trains']) > 0:
           destination_name = metro_status['Trains'][0]['DestinationName']
           self._destination_name = destination_name
-          print('Destination: ' + destination_name)
 
           location_name = metro_status['Trains'][0]['LocationName']
           self._location_name = location_name
-          print('Current Location: ' + location_name)
 
           line = metro_status['Trains'][0]['Line']
           self._line = line
-          print('Line: ' + line)
 
           arrival_minutes = metro_status['Trains'][0]['Min']
           if arrival_minutes.isdigit():
@@ -58,7 +55,6 @@ class Metro_Graphics:
 
           self._has_arrived = has_arrived
           self._arrival_minutes = arrival_minutes
-          print('Arrival Status: ' + arrival_minutes)
         else:
             self._destination_name = 'No Trains'
 
@@ -75,7 +71,8 @@ class Metro_Graphics:
         draw = ImageDraw.Draw(image)
 
         # Draw the time
-        (font_width, font_height) = medium_font.getsize(self._time_text)
+        bbox = draw.textbbox((0, 0), self._time_text, font=self.medium_font)
+        font_width = bbox[2] - bbox[0]
         draw.text(
             (5, self.display.height - 55),
             self._time_text,
@@ -84,7 +81,6 @@ class Metro_Graphics:
         )
 
         # Draw the destination
-        (font_width, font_height) = medium_font.getsize(self._destination_name)
         draw.text(
             (5, 5),
             self._destination_name,
@@ -92,7 +88,6 @@ class Metro_Graphics:
             fill=BLACK,
         )
 
-        (font_width, font_height) = large_font.getsize(self._location_name)
         draw.text(
             (5, 30),
             self._location_name,
@@ -101,17 +96,17 @@ class Metro_Graphics:
         )
 
         # Draw the line
-        (font_width, font_height) = large_font.getsize(self._line)
         draw.text(
             (5, self.display.height - 30),
             self._line,
             font=self.large_font,
             fill=BLACK,
         )
-        
-         
+
+
         # Draw the arrival time
-        (font_width, font_height) = large_font.getsize(self._arrival_minutes)
+        bbox = draw.textbbox((0, 0), self._arrival_minutes, font=self.large_font)
+        font_width = bbox[2] - bbox[0]
         draw.text(
             (
                 self.display.width - font_width - 5,

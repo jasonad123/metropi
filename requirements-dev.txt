@@ -1,0 +1,4 @@
+# Development/testing requirements (Mac/Linux/Windows)
+# Use this for local testing without hardware
+requests==2.32.3
+python-dotenv==1.0.1
