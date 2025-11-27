@@ -1,9 +1,9 @@
-Adafruit-Blinka==8.47.0
-adafruit-circuitpython-busdevice==5.2.9
-adafruit-circuitpython-epd==2.12.14
-adafruit-circuitpython-framebuf==1.6.3
-adafruit-circuitpython-typing==1.11.0
-Adafruit-PlatformDetect==3.74.0
+Adafruit-Blinka==8.68.0
+adafruit-circuitpython-busdevice==5.2.14
+adafruit-circuitpython-epd==2.17.1
+adafruit-circuitpython-framebuf==1.6.10
+adafruit-circuitpython-typing==1.12.3
+Adafruit-PlatformDetect==3.85.0
 Pillow==10.4.0
 requests==2.32.3
 python-dotenv==1.0.1
