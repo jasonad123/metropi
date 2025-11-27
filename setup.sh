@@ -14,6 +14,11 @@ if [ ! -f /proc/device-tree/model ] || ! grep -q "Raspberry Pi" /proc/device-tre
     fi
 fi
 
+# Install system dependencies
+echo "Installing system dependencies..."
+sudo apt-get update
+sudo apt-get install -y python3-dev swig
+
 # Check for .env file
 if [ ! -f .env ]; then
     echo "Error: .env file not found"
