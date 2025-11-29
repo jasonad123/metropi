@@ -45,6 +45,10 @@ else
     pip install -r requirements.txt
 fi
 
+# Add user to gpio group
+echo "Adding user to gpio group..."
+sudo usermod -a -G gpio $USER
+
 # Install systemd service
 echo "Installing systemd service..."
 INSTALL_DIR=$(pwd)

@@ -1,11 +1,12 @@
 [Unit]
 Description=Metro Pi Display Service
-After=network-online.target
+After=network-online.target multi-user.target
 Wants=network-online.target
 
 [Service]
 Type=simple
 User=pi
+SupplementaryGroups=gpio
 WorkingDirectory=/home/pi/metropi
 ExecStart=/home/pi/metropi/venv/bin/python /home/pi/metropi/main.py
 Restart=on-failure
