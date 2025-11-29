@@ -6,6 +6,7 @@ from adafruit_epd.epd import Adafruit_EPD
 header_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 14)
 train_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16)
 small_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
+mins_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
 
 # RGB Colors
 WHITE = (255, 255, 255)
@@ -78,21 +79,27 @@ class Metro_Graphics:
             destination = train.get('DestinationName', 'Unknown')
             min_val = train.get('Min', '-')
 
-            # Truncate destination if too long (approx 14 chars for available space)
-            if len(destination) > 14:
-                destination = destination[:13] + "."
+            # Truncate destination if too long (approx 17 chars for available space)
+            if len(destination) > 17:
+                destination = destination[:16] + "."
 
             # Draw train info (Ln, Destination, Car order)
             draw.text((5, y_pos), line, font=train_font, fill=BLACK)
             draw.text((40, y_pos), destination, font=train_font, fill=BLACK)
             draw.text((160, y_pos), str(car), font=train_font, fill=BLACK)
 
-            # Format arrival time (append "mins" for numeric values, keep ARR/BRD as-is)
+            # Format arrival time (large number + small "mins" suffix)
             if min_val not in ['ARR', 'BRD', '-']:
-                arrival_text = f"{min_val} mins"
+                # Draw number in large font
+                draw.text((195, y_pos), min_val, font=train_font, fill=BLACK)
+                # Calculate width of number and draw "mins" in smaller font
+                bbox = draw.textbbox((0, 0), min_val, font=train_font)
+                num_width = bbox[2] - bbox[0]
+                # Offset "mins" slightly down to align baseline better
+                draw.text((195 + num_width + 2, y_pos + 4), "mins", font=mins_font, fill=BLACK)
             else:
-                arrival_text = min_val
-            draw.text((195, y_pos), arrival_text, font=train_font, fill=BLACK)
+                # ARR/BRD use regular font
+                draw.text((195, y_pos), min_val, font=train_font, fill=BLACK)
 
             y_pos += row_height
 
