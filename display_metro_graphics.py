@@ -2,13 +2,10 @@ from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 from adafruit_epd.epd import Adafruit_EPD
 
-small_font = ImageFont.truetype(
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16
-)
-medium_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
-large_font = ImageFont.truetype(
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24
-)
+# PIDS-style fonts
+header_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 14)
+train_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16)
+small_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
 
 # RGB Colors
 WHITE = (255, 255, 255)
@@ -17,54 +14,24 @@ BLACK = (0, 0, 0)
 
 class Metro_Graphics:
     def __init__(self, display):
-
-        self.small_font = small_font
-        self.medium_font = medium_font
-        self.large_font = large_font
-
         self.display = display
-
-        self._metro_icon = None
-        self._destination_name = None
-        self._location_name = None
-        self._arrival_minutes = None
-        self._line = None
-        self._progress = None
-        self._has_arrived = None
+        self._station_name = None
+        self._trains = []
         self._refresh_count = 0
 
     def display_metro(self, metro_status):
-
+        # Store station name and train list
         if len(metro_status['Trains']) > 0:
-          destination_name = metro_status['Trains'][0]['DestinationName']
-          self._destination_name = destination_name
-
-          location_name = metro_status['Trains'][0]['LocationName']
-          self._location_name = location_name
-
-          line = metro_status['Trains'][0]['Line']
-          self._line = line
-
-          arrival_minutes = metro_status['Trains'][0]['Min']
-          if arrival_minutes.isdigit():
-              has_arrived = False
-              progress = self.display.width / int(arrival_minutes)
-              arrival_minutes = arrival_minutes + 'min'
-              self._progress = progress
-          else:
-              has_arrived = True
-
-          self._has_arrived = has_arrived
-          self._arrival_minutes = arrival_minutes
+            self._station_name = metro_status['Trains'][0]['LocationName']
+            self._trains = metro_status['Trains'][:4]  # Show up to 4 trains
         else:
-            self._destination_name = 'No Trains'
+            self._station_name = "No Service"
+            self._trains = []
 
-        self.update_time()
         self.update_display()
 
     def update_time(self):
-        now = datetime.now()
-        self._time_text = now.strftime("%I:%M %p").lstrip("0").replace(" 0", " ")
+        pass  # Called from main loop but not needed in PIDS display
 
     def update_display(self):
         # Perform a full clear every 10 refreshes to remove ghosting
@@ -77,63 +44,52 @@ class Metro_Graphics:
         image = Image.new("RGB", (self.display.width, self.display.height), color=WHITE)
         draw = ImageDraw.Draw(image)
 
-        # Draw the destination
-        draw.text(
-            (5, 10),
-            self._destination_name,
-            font=self.large_font,
-            fill=BLACK,
-        )
+        # Get current time
+        now = datetime.now()
+        time_text = now.strftime("%I:%M %p").lstrip("0").replace(" 0", " ")
 
-        # Draw the location
-        draw.text(
-            (5, 40),
-            self._location_name,
-            font=self.medium_font,
-            fill=BLACK,
-        )
+        # Header: Station name and time
+        y_pos = 5
+        station_text = (self._station_name or "").upper()
+        draw.text((5, y_pos), station_text, font=header_font, fill=BLACK)
 
-        # Draw the time
-        draw.text(
-            (5, self.display.height - 60),
-            self._time_text,
-            font=self.medium_font,
-            fill=BLACK,
-        )
+        # Time on right side of header
+        bbox = draw.textbbox((0, 0), time_text, font=header_font)
+        time_width = bbox[2] - bbox[0]
+        draw.text((self.display.width - time_width - 5, y_pos), time_text, font=header_font, fill=BLACK)
 
-        # Draw the line
-        draw.text(
-            (5, self.display.height - 35),
-            self._line,
-            font=self.large_font,
-            fill=BLACK,
-        )
+        # Column headers
+        y_pos = 25
+        draw.text((5, y_pos), "LN", font=small_font, fill=BLACK)
+        draw.text((30, y_pos), "CAR", font=small_font, fill=BLACK)
+        draw.text((60, y_pos), "DESTINATION", font=small_font, fill=BLACK)
+        draw.text((self.display.width - 40, y_pos), "MIN", font=small_font, fill=BLACK)
 
-        # Draw the arrival time
-        bbox = draw.textbbox((0, 0), self._arrival_minutes, font=self.large_font)
-        font_width = bbox[2] - bbox[0]
-        draw.text(
-            (
-                self.display.width - font_width - 5,
-                self.display.height - 35,
-            ),
-            self._arrival_minutes,
-            font=self.large_font,
-            fill=BLACK,
-        )
+        # Train rows
+        y_pos = 45
+        row_height = 20
 
-        # Draw progress
-        if not self._has_arrived:
-            box_width = self.display.width / 10
-            box_height = self.display.width / 10
-            i = 0
-            for i in range(10):
-                x0 = box_width * i + 1
-                y0 = self.display.height - (self.display.height / 4)
-                x1 = (box_width * 2) * i
-                y1 = (self.display.height - (self.display.height / 4)) + box_height
-                # draw.rounded_rectangle([(x0, y0), (x1, y1)], 2, BLACK, BLACK, 30)
-            self._progress = self._progress * 2
-       
+        for train in self._trains[:4]:
+            line = train.get('Line', '--')
+            car = train.get('Car', '-')
+            destination = train.get('DestinationName', 'Unknown')
+            min_val = train.get('Min', '-')
+
+            # Truncate destination if too long (approx 13 chars for 16pt font)
+            if len(destination) > 13:
+                destination = destination[:12] + "."
+
+            # Draw train info
+            draw.text((5, y_pos), line, font=train_font, fill=BLACK)
+            draw.text((30, y_pos), str(car), font=train_font, fill=BLACK)
+            draw.text((60, y_pos), destination, font=train_font, fill=BLACK)
+
+            # Right-align minutes
+            bbox = draw.textbbox((0, 0), min_val, font=train_font)
+            min_width = bbox[2] - bbox[0]
+            draw.text((self.display.width - min_width - 5, y_pos), min_val, font=train_font, fill=BLACK)
+
+            y_pos += row_height
+
         self.display.image(image)
         self.display.display()
