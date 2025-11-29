@@ -70,39 +70,37 @@ class Metro_Graphics:
         image = Image.new("RGB", (self.display.width, self.display.height), color=WHITE)
         draw = ImageDraw.Draw(image)
 
-        # Draw the time
-        bbox = draw.textbbox((0, 0), self._time_text, font=self.medium_font)
-        font_width = bbox[2] - bbox[0]
-        draw.text(
-            (5, self.display.height - 55),
-            self._time_text,
-            font=self.medium_font,
-            fill=BLACK,
-        )
-
         # Draw the destination
         draw.text(
-            (5, 5),
+            (5, 10),
             self._destination_name,
             font=self.large_font,
             fill=BLACK,
         )
 
+        # Draw the location
         draw.text(
-            (5, 30),
+            (5, 40),
             self._location_name,
+            font=self.medium_font,
+            fill=BLACK,
+        )
+
+        # Draw the time
+        draw.text(
+            (5, self.display.height - 60),
+            self._time_text,
             font=self.medium_font,
             fill=BLACK,
         )
 
         # Draw the line
         draw.text(
-            (5, self.display.height - 30),
+            (5, self.display.height - 35),
             self._line,
             font=self.large_font,
             fill=BLACK,
         )
-
 
         # Draw the arrival time
         bbox = draw.textbbox((0, 0), self._arrival_minutes, font=self.large_font)
@@ -110,7 +108,7 @@ class Metro_Graphics:
         draw.text(
             (
                 self.display.width - font_width - 5,
-                self.display.height - 30,
+                self.display.height - 35,
             ),
             self._arrival_minutes,
             font=self.large_font,
