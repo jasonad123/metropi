@@ -50,7 +50,7 @@ class Metro_Graphics:
 
         # Header: Station name and time
         y_pos = 2
-        station_text = (self._station_name or "").upper()
+        station_text = (self._station_name or "")
         draw.text((5, y_pos), station_text, font=header_font, fill=BLACK)
 
         # Time on right side of header
@@ -61,12 +61,12 @@ class Metro_Graphics:
         # Separator line between header and departures
         draw.line([(0, 17), (self.display.width, 17)], fill=BLACK, width=1)
 
-        # Column headers
+        # Column headers (newer PIDS style: Ln | Destination | Car | Arrival)
         y_pos = 20
-        draw.text((5, y_pos), "LN", font=small_font, fill=BLACK)
-        draw.text((45, y_pos), "CAR", font=small_font, fill=BLACK)
-        draw.text((75, y_pos), "DESTINATION", font=small_font, fill=BLACK)
-        draw.text((self.display.width - 40, y_pos), "MIN", font=small_font, fill=BLACK)
+        draw.text((5, y_pos), "Ln", font=small_font, fill=BLACK)
+        draw.text((30, y_pos), "Destination", font=small_font, fill=BLACK)
+        draw.text((160, y_pos), "Car", font=small_font, fill=BLACK)
+        draw.text((self.display.width - 50, y_pos), "Arrival", font=small_font, fill=BLACK)
 
         # Train rows
         y_pos = 38
@@ -78,14 +78,14 @@ class Metro_Graphics:
             destination = train.get('DestinationName', 'Unknown')
             min_val = train.get('Min', '-')
 
-            # Truncate destination if too long (approx 13 chars for 16pt font)
-            if len(destination) > 13:
-                destination = destination[:12] + "."
+            # Truncate destination if too long (approx 15 chars for available space)
+            if len(destination) > 15:
+                destination = destination[:14] + "."
 
-            # Draw train info
+            # Draw train info (Ln, Destination, Car order)
             draw.text((5, y_pos), line, font=train_font, fill=BLACK)
-            draw.text((45, y_pos), str(car), font=train_font, fill=BLACK)
-            draw.text((75, y_pos), destination, font=train_font, fill=BLACK)
+            draw.text((30, y_pos), destination, font=train_font, fill=BLACK)
+            draw.text((160, y_pos), str(car), font=train_font, fill=BLACK)
 
             # Right-align minutes
             bbox = draw.textbbox((0, 0), min_val, font=train_font)
