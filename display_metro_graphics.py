@@ -2,11 +2,18 @@ from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
 from adafruit_epd.epd import Adafruit_EPD
 
-# PIDS-style fonts
-header_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 14)
-train_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16)
-small_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
-mins_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
+# PIDS-style fonts (Liberation Sans is closer to Helvetica Neue than DejaVu)
+try:
+    header_font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf", 14)
+    train_font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf", 16)
+    small_font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", 12)
+    mins_font = ImageFont.truetype("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", 10)
+except OSError:
+    # Fallback to DejaVu if Liberation Sans not available
+    header_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 14)
+    train_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16)
+    small_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
+    mins_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
 
 # RGB Colors
 WHITE = (255, 255, 255)
@@ -66,8 +73,8 @@ class Metro_Graphics:
         y_pos = 20
         draw.text((5, y_pos), "Ln", font=small_font, fill=BLACK)
         draw.text((40, y_pos), "Destination", font=small_font, fill=BLACK)
-        draw.text((160, y_pos), "Car", font=small_font, fill=BLACK)
-        draw.text((195, y_pos), "Arrival", font=small_font, fill=BLACK)
+        draw.text((175, y_pos), "Car", font=small_font, fill=BLACK)
+        draw.text((205, y_pos), "Arrival", font=small_font, fill=BLACK)
 
         # Train rows
         y_pos = 38
@@ -79,27 +86,28 @@ class Metro_Graphics:
             destination = train.get('DestinationName', 'Unknown')
             min_val = train.get('Min', '-')
 
-            # Truncate destination if too long (approx 17 chars for available space)
-            if len(destination) > 17:
-                destination = destination[:16] + "."
+            # Truncate destination if too long (135px available from x=40 to x=175)
+            # At 16pt bold, roughly 13 chars max
+            if len(destination) > 13:
+                destination = destination[:12] + "."
 
             # Draw train info (Ln, Destination, Car order)
             draw.text((5, y_pos), line, font=train_font, fill=BLACK)
             draw.text((40, y_pos), destination, font=train_font, fill=BLACK)
-            draw.text((160, y_pos), str(car), font=train_font, fill=BLACK)
+            draw.text((175, y_pos), str(car), font=train_font, fill=BLACK)
 
-            # Format arrival time (large number + small "mins" suffix)
+            # Format arrival time (large number + small "min" suffix)
             if min_val not in ['ARR', 'BRD', '-']:
                 # Draw number in large font
-                draw.text((195, y_pos), min_val, font=train_font, fill=BLACK)
-                # Calculate width of number and draw "mins" in smaller font
+                draw.text((205, y_pos), min_val, font=train_font, fill=BLACK)
+                # Calculate width of number and draw "min" in smaller font
                 bbox = draw.textbbox((0, 0), min_val, font=train_font)
                 num_width = bbox[2] - bbox[0]
-                # Offset "mins" slightly down to align baseline better
-                draw.text((195 + num_width + 2, y_pos + 4), "mins", font=mins_font, fill=BLACK)
+                # Offset "min" slightly down to align baseline better
+                draw.text((205 + num_width + 2, y_pos + 4), "min", font=mins_font, fill=BLACK)
             else:
                 # ARR/BRD use regular font
-                draw.text((195, y_pos), min_val, font=train_font, fill=BLACK)
+                draw.text((205, y_pos), min_val, font=train_font, fill=BLACK)
 
             y_pos += row_height
 

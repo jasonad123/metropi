@@ -17,7 +17,7 @@ fi
 # Install system dependencies
 echo "Installing system dependencies..."
 sudo apt-get update
-sudo apt-get install -y python3-dev swig liblgpio-dev fonts-dejavu
+sudo apt-get install -y python3-dev swig liblgpio-dev fonts-dejavu fonts-liberation
 
 # Check for .env file
 if [ ! -f .env ]; then
