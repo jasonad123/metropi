@@ -31,6 +31,7 @@ class Metro_Graphics:
         self._line = None
         self._progress = None
         self._has_arrived = None
+        self._refresh_count = 0
 
     def display_metro(self, metro_status):
 
@@ -66,6 +67,12 @@ class Metro_Graphics:
         self._time_text = now.strftime("%I:%M %p").lstrip("0").replace(" 0", " ")
 
     def update_display(self):
+        # Perform a full clear every 10 refreshes to remove ghosting
+        self._refresh_count += 1
+        if self._refresh_count % 10 == 1:
+            self.display.fill(Adafruit_EPD.WHITE)
+            self.display.display()
+
         self.display.fill(Adafruit_EPD.WHITE)
         image = Image.new("RGB", (self.display.width, self.display.height), color=WHITE)
         draw = ImageDraw.Draw(image)
