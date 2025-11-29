@@ -64,9 +64,9 @@ class Metro_Graphics:
         # Column headers (newer PIDS style: Ln | Destination | Car | Arrival)
         y_pos = 20
         draw.text((5, y_pos), "Ln", font=small_font, fill=BLACK)
-        draw.text((30, y_pos), "Destination", font=small_font, fill=BLACK)
+        draw.text((40, y_pos), "Destination", font=small_font, fill=BLACK)
         draw.text((160, y_pos), "Car", font=small_font, fill=BLACK)
-        draw.text((self.display.width - 50, y_pos), "Arrival", font=small_font, fill=BLACK)
+        draw.text((195, y_pos), "Arrival", font=small_font, fill=BLACK)
 
         # Train rows
         y_pos = 38
@@ -78,19 +78,21 @@ class Metro_Graphics:
             destination = train.get('DestinationName', 'Unknown')
             min_val = train.get('Min', '-')
 
-            # Truncate destination if too long (approx 15 chars for available space)
-            if len(destination) > 15:
-                destination = destination[:14] + "."
+            # Truncate destination if too long (approx 14 chars for available space)
+            if len(destination) > 14:
+                destination = destination[:13] + "."
 
             # Draw train info (Ln, Destination, Car order)
             draw.text((5, y_pos), line, font=train_font, fill=BLACK)
-            draw.text((30, y_pos), destination, font=train_font, fill=BLACK)
+            draw.text((40, y_pos), destination, font=train_font, fill=BLACK)
             draw.text((160, y_pos), str(car), font=train_font, fill=BLACK)
 
-            # Right-align minutes
-            bbox = draw.textbbox((0, 0), min_val, font=train_font)
-            min_width = bbox[2] - bbox[0]
-            draw.text((self.display.width - min_width - 5, y_pos), min_val, font=train_font, fill=BLACK)
+            # Format arrival time (append "mins" for numeric values, keep ARR/BRD as-is)
+            if min_val not in ['ARR', 'BRD', '-']:
+                arrival_text = f"{min_val} mins"
+            else:
+                arrival_text = min_val
+            draw.text((195, y_pos), arrival_text, font=train_font, fill=BLACK)
 
             y_pos += row_height
 
