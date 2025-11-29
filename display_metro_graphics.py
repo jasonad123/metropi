@@ -49,7 +49,7 @@ class Metro_Graphics:
         time_text = now.strftime("%I:%M %p").lstrip("0").replace(" 0", " ")
 
         # Header: Station name and time
-        y_pos = 5
+        y_pos = 2
         station_text = (self._station_name or "").upper()
         draw.text((5, y_pos), station_text, font=header_font, fill=BLACK)
 
@@ -58,15 +58,18 @@ class Metro_Graphics:
         time_width = bbox[2] - bbox[0]
         draw.text((self.display.width - time_width - 5, y_pos), time_text, font=header_font, fill=BLACK)
 
+        # Separator line between header and departures
+        draw.line([(0, 17), (self.display.width, 17)], fill=BLACK, width=1)
+
         # Column headers
-        y_pos = 25
+        y_pos = 20
         draw.text((5, y_pos), "LN", font=small_font, fill=BLACK)
-        draw.text((30, y_pos), "CAR", font=small_font, fill=BLACK)
-        draw.text((60, y_pos), "DESTINATION", font=small_font, fill=BLACK)
+        draw.text((45, y_pos), "CAR", font=small_font, fill=BLACK)
+        draw.text((75, y_pos), "DESTINATION", font=small_font, fill=BLACK)
         draw.text((self.display.width - 40, y_pos), "MIN", font=small_font, fill=BLACK)
 
         # Train rows
-        y_pos = 45
+        y_pos = 38
         row_height = 20
 
         for train in self._trains[:4]:
@@ -81,8 +84,8 @@ class Metro_Graphics:
 
             # Draw train info
             draw.text((5, y_pos), line, font=train_font, fill=BLACK)
-            draw.text((30, y_pos), str(car), font=train_font, fill=BLACK)
-            draw.text((60, y_pos), destination, font=train_font, fill=BLACK)
+            draw.text((45, y_pos), str(car), font=train_font, fill=BLACK)
+            draw.text((75, y_pos), destination, font=train_font, fill=BLACK)
 
             # Right-align minutes
             bbox = draw.textbbox((0, 0), min_val, font=train_font)
