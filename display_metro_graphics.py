@@ -42,9 +42,8 @@ class Metro_Graphics:
         pass  # Called from main loop but not needed in PIDS display
 
     def update_display(self):
-        # Perform a full clear every 10 refreshes to remove ghosting
         self._refresh_count += 1
-        if self._refresh_count % 10 == 1:
+        if self._refresh_count % 60 == 1:
             self.display.fill(Adafruit_EPD.WHITE)
             self.display.display()
 

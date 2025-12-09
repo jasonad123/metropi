@@ -34,6 +34,9 @@ api_key = os.getenv('METRO_API_KEY')
 if not api_key:
     raise ValueError("METRO_API_KEY not found in environment variables. Please check your .env file.")
 
+## Check if display should be rotated 180 degrees
+rotate_180 = os.getenv('DISPLAY_ROTATE_180', 'false').lower() in ('true', '1', 'yes')
+
 logger.info("Starting Metro Pi Display Service")
 
 spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
@@ -60,7 +63,10 @@ display = Adafruit_SSD1680(   # newer eInk bonnet
     122, 250, spi, cs_pin=cs, dc_pin=dc, sramcs_pin=None, rst_pin=rst, busy_pin=busy,
 )
 
-display.rotation = 1
+# Set rotation: 1 = landscape, 3 = landscape rotated 180 degrees
+display.rotation = 3 if rotate_180 else 1
+if rotate_180:
+    logger.info("Display rotation: 180 degrees (rotation=3)")
 gfx = Metro_Graphics(display)
 refresh_display = None
 

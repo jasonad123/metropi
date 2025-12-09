@@ -65,6 +65,15 @@ sudo journalctl -u metropi -f   # View logs
 
 ## Configuration
 
+### Environment Variables
+
+Set these in your `.env` file:
+
+* `METRO_API_KEY` - Your WMATA API key (required)
+* `DISPLAY_ROTATE_180` - Set to `true` to rotate display 180 degrees for upside-down mounting (default: `false`)
+
+### Station Selection
+
 * To change the station being displayed modify `line 53` in [main.py](main.py#L53) with the station code you want to use.
 * Station codes can be found in [the following JSON](https://developer.wmata.com/docs/services/5476364f031f590f38092507/operations/5476364f031f5909e4fe3311?) from the WMATA API.
 
