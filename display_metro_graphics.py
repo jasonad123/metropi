@@ -149,7 +149,7 @@ class Metro_Graphics_Shift:
         time_text = now.strftime("%I:%M %p").lstrip("0").replace(" 0", " ")
 
         # Header: Station name and time
-        y_pos = 4
+        y_pos = 6
         station_text = (self._station_name or "")
         draw.text((5, y_pos), station_text, font=header_font, fill=BLACK)
 
@@ -159,17 +159,17 @@ class Metro_Graphics_Shift:
         draw.text((self.display.width - time_width - 5, y_pos), time_text, font=header_font, fill=BLACK)
 
         # Separator line between header and departures
-        draw.line([(0, 19), (self.display.width, 19)], fill=BLACK, width=1)
+        draw.line([(0, 21), (self.display.width, 21)], fill=BLACK, width=1)
 
         # Column headers (newer PIDS style: Ln | Destination | Car | Arrival)
-        y_pos = 22
+        y_pos = 24
         draw.text((5, y_pos), "Ln", font=small_font, fill=BLACK)
         draw.text((40, y_pos), "Destination", font=small_font, fill=BLACK)
         draw.text((175, y_pos), "Car", font=small_font, fill=BLACK)
         draw.text((205, y_pos), "Arrival", font=small_font, fill=BLACK)
 
         # Train rows
-        y_pos = 40
+        y_pos = 42
         row_height = 20
 
         for train in self._trains[:4]:
