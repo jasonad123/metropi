@@ -10,6 +10,7 @@ import sys
 from adafruit_epd.ssd1680 import Adafruit_SSD1680
 from dotenv import load_dotenv
 from display_metro_graphics import Metro_Graphics
+from display_metro_graphics import Metro_Graphics_Shift
 
 ## Setup logging
 logging.basicConfig(
@@ -67,7 +68,9 @@ display = Adafruit_SSD1680(   # newer eInk bonnet
 display.rotation = 3 if rotate_180 else 1
 if rotate_180:
     logger.info("Display rotation: 180 degrees (rotation=3)")
-gfx = Metro_Graphics(display)
+    gfx = Metro_Graphics_Shift(display)
+else:
+    gfx = Metro_Graphics(display)
 refresh_display = None
 
 while True:
